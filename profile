@@ -28,3 +28,5 @@ fi
 if [[ -s /home/douglas/.rvm/scripts/rvm ]] ; then
   source /home/douglas/.rvm/scripts/rvm
 fi
+
+EDITOR=vim

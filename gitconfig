@@ -1,0 +1,23 @@
+[user]
+  name = Douglas Meyer
+  email = douglas.meyer@centro.net
+[diff]
+  tool = vimdiff
+[color]
+  status = auto
+  branch = auto
+  diff = auto
+  grep = auto
+  interactive = auto
+  ui = true
+  pager = true
+[core]
+  whitespace = trailing-space,space-before-tab
+  editor = vim
+[alias]
+  tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+#  tree = log --graph --pretty=oneline --decorate
+[core]
+  pager = less -FRSX
+[apply]
+  whitespace = fix
