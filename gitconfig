@@ -16,8 +16,10 @@
   editor = vim
 [alias]
   tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-#  tree = log --graph --pretty=oneline --decorate
+  tar-gz = !sh -c 'prefix=$(basename $PWD) && ver=$1 && git archive --prefix=\"$prefix-$ver/\" HEAD | gzip > \"$prefix-$ver.tar.gz\"' -
 [core]
   pager = less -FRSX
 [apply]
   whitespace = fix
+[branch "master"]
+  mergeoptions = --no-ff

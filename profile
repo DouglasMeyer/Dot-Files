@@ -24,7 +24,3 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
   PATH="$HOME/.local/bin:$PATH"
 fi
-
-if [[ -s /home/douglas/.rvm/scripts/rvm ]] ; then
-  source /home/douglas/.rvm/scripts/rvm
-fi

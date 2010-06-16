@@ -94,6 +94,10 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
+if [[ -s $HOME/.rvm/scripts/rvm ]] ; then
+  source $HOME/.rvm/scripts/rvm
+fi
+
 EDITOR="vim"
 
 # Completers
@@ -104,3 +108,4 @@ EDITOR="vim"
 #complete -o default -W '${SSH_COMPLETE[*]}' ssh
 DATABASE_COMPLETE=( $(psql -l | awk "/$USERNAME/ { print \$1 }" ) )
 complete -o default -W '${DATABASE_COMPLETE[*]}' psql dropdb
+complete -C $HOME/.local/dot_files/rake_completion.rb -o default rake
