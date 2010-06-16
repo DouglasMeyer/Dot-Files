@@ -64,7 +64,7 @@ if has("autocmd")
 
   " jump to last position when reopening a file
   autocmd BufReadPost *
-  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
   \   exe "normal g`\"" |
   \ endif
 
