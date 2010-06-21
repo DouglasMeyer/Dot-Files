@@ -97,10 +97,10 @@ autocmd FileType ruby :map <silent> <Leader>r
 autocmd FileType php :map <F5> :!phpunit %\| tee /tmp/test.out<CR>
 
 vmap <silent> <Leader>f c<C-R><C-R>=substitute(@", "\\([^,]*\\),\\(\\s\\?\\)\\(.*\\)", "\\3,\\2\\1", "")<CR><ESC>
-iabbrev <silent> UnicodeSnowman ☃
-iabbrev <silent> InterroBang ‽
-iabbrev <silent> Interrobang ‽
-iabbrev <silent> SadFace ☹
+iabbrev <silent> UNICODESNOWMAN ☃
+iabbrev <silent> INTERROBANG ‽
+iabbrev <silent> SADFACE ☹
+iabbrev <silent> CHECK ✓
 map <C-C> <C-A>
 nmap <Leader>v :source ~/.vimrc<CR>
 

@@ -99,6 +99,7 @@ if [[ -s $HOME/.rvm/scripts/rvm ]] ; then
 fi
 
 EDITOR="vim"
+BROWSER="/usr/bin/chromium-browser"
 
 # Completers
 #SSH_COMPLETE=( $(cat ~/.ssh/known_hosts | \
