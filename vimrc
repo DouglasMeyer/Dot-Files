@@ -24,6 +24,7 @@ set ignorecase
 set smartcase
 set list " show Tabs and EOL     
 set listchars=tab:>⋅,trail:␣
+set fileformats=unix " force files to not support MS-DOS files
 " I have no clude what this does.
 " #{file_name}(#{buf_index}) #{formats:[unix,MS-dos]:[sh]:[utf-8]}
 "     [#{line_number},#{col_number}]  [#{page_percent}]
@@ -68,8 +69,14 @@ if has("autocmd")
   \   exe "normal g`\"" |
   \ endif
 
-  autocmd FileType helpfile nnoremap <buffer><cr> <c-]>   " Enter selects subject
-  autocmd FileType helpfile nnoremap <buffer><bs> <c-T>   " Backspace to go back
+  " automatically turn on spelling for git commit messages
+  autocmd FileType gitcommit set spell
+
+  autocmd FileType help nnoremap <buffer><CR> <C-]>   " Enter selects subject
+  autocmd FileType help nnoremap <buffer><BS> <C-T>   " Backspace to go back
+
+  " reload vimrc when it is written
+  autocmd bufwritepost .vimrc source $MYVIMRC
 else
   set autoindent
 endif
@@ -102,9 +109,11 @@ iabbrev <silent> INTERROBANG ‽
 iabbrev <silent> SADFACE ☹
 iabbrev <silent> CHECK ✓
 map <C-C> <C-A>
-nmap <Leader>v :source ~/.vimrc<CR>
 
 map <Leader>m :FuzzyFinderTextMate<CR>
+
+" ftplugin options
+let g:git_diff_spawn_mode = 1
 
 function! GitDiff(files)
   aboveleft new
