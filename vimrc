@@ -1,3 +1,6 @@
+set nocompatible " don't make VIM compatible with VI
+set modelines=0  " some security thing
+
 "syntax on
 syntax enable
 
@@ -7,6 +10,14 @@ set shiftwidth=2
 set expandtab
 set smartindent
 
+"searching
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+nnoremap <C-L> :nohlsearch<CR><C-L>
+
+set dir=/tmp/ram
 set mouse=nv
 set title
 set wildmenu
@@ -17,25 +28,17 @@ set scrolloff=2
 " get rif of a bunch of confirmation messages
 set shortmess=atI
 let mapleader = ","
-"set foldmethod=syntax
-"set foldcolumn=0
-"set foldlevel=100
-set ignorecase
-set smartcase
 set list " show Tabs and EOL     
 set listchars=tab:>⋅,trail:␣
 set fileformats=unix " force files to not support MS-DOS files
 " I have no clude what this does.
 " #{file_name}(#{buf_index}) #{formats:[unix,MS-dos]:[sh]:[utf-8]}
 "     [#{line_number},#{col_number}]  [#{page_percent}]
-set statusline=%t(%1.3n)%m%r%{VarExists('b:gzflag','\ [GZ]')}%h%w\ %([%{&ff}]%)%(:%y%)%(:[%{&fenc}]%)\ %=[%1.7l,%1.7c]\ \ [%p%%]
+set statusline=%f(%1.3n)%m%r%{VarExists('b:gzflag','\ [GZ]')}%h%w\ %([%{&ff}]%)%(:%y%)%(:[%{&fenc}]%)\ %=[%1.7l,%1.7c]\ \ [%p%%]
 function! VarExists(var, val)
   if exists(a:var) | return a:val | else | return '' | endif
 endfunction
 set laststatus=2
-set incsearch
-set hlsearch
-nnoremap <C-L> :nohlsearch<CR><C-L>
 
 if &diff
   "setup for diff mode
@@ -74,9 +77,6 @@ if has("autocmd")
 
   autocmd FileType help nnoremap <buffer><CR> <C-]>   " Enter selects subject
   autocmd FileType help nnoremap <buffer><BS> <C-T>   " Backspace to go back
-
-  " reload vimrc when it is written
-  autocmd bufwritepost .vimrc source $MYVIMRC
 else
   set autoindent
 endif
@@ -108,7 +108,12 @@ iabbrev <silent> UNICODESNOWMAN ☃
 iabbrev <silent> INTERROBANG ‽
 iabbrev <silent> SADFACE ☹
 iabbrev <silent> CHECK ✓
+"iabbrev <silent> #\!ruby "#!/usr/bin/env ruby"
+iabbrev <silent> env_ruby #!/usr/bin/env ruby
 map <C-C> <C-A>
+
+" save a file, even if you forgot "sudo vim"
+cmap w!! w !sudo tee % >/dev/null
 
 map <Leader>m :FuzzyFinderTextMate<CR>
 
@@ -126,65 +131,5 @@ command! -narg=* -complete=custom,ListGitDiff GitDiff call GitDiff(<q-args>)
 function! ListGitDiff(A,L,P)
   return system("git status | grep modified | cut -c 15-")
 endfun
-
-
-function! Find(name)
-  let l:_name = substitute(a:name, "\\s", "*", "g")
-  let l:list=system("find . -iname '*".l:_name."*' -not -name \"*.class\" -and -not -name \"*.swp\" | perl -ne 'print \"$.\\t$_\"'")
-  let l:num=strlen(substitute(l:list, "[^\n]", "", "g"))
-  if l:num < 1
-    echo "'".a:name."' not found"
-    return
-  endif
-  if l:num != 1
-    echo l:list
-    let l:input=input("Which ? (<enter>=nothing)\n")
-    if strlen(l:input)==0
-      return
-    endif
-    if strlen(substitute(l:input, "[0-9]", "", "g"))>0
-      echo "Not a number"
-      return
-    endif
-    if l:input<1 || l:input>l:num
-      echo "Out of range"
-      return
-    endif
-    let l:line=matchstr("\n".l:list, "\n".l:input."\t[^\n]*")
-  else
-    let l:line=l:list
-  endif
-  let l:line=substitute(l:line, "^[^\t]*\t./", "", "")
-  execute ":e ".l:line
-endfunction
-command! -nargs=1 Find :call Find("<args>")
-
-
-function! Open(name)
-ruby << RUBYEND
-  name = VIM::evaluate("a:name").gsub(/\s/, '*')
-  files = %x(find . -iwholename '*#{name}*' -not -name ".*.swp").split("\n")
-  if files.empty?
-    print "No Matches"
-  else
-    file_num = ""
-    if files.length == 1
-      file_num = "1"
-    else
-      files = files.sort{|a,b| a.length <=> b.length }
-      files.each_with_index do |file, index|
-        VIM::command("echo \"%s. %s\"" % [index+1, file])
-      end
-      file_num = VIM::evaluate('input("Which ? (<enter>=nothing)\n")')
-    end
-    unless file_num == ''
-      VIM::command("execute \":e #{files[file_num.to_i-1]}\"")
-    end
-  end
-RUBYEND
-endfunction
-command! -nargs=1 Open :call Open("<args>")
-map <Leader>e :Open 
-
 
 ":edit **/adm*trol<CTRL_D>

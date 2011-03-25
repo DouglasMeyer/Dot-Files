@@ -34,6 +34,36 @@ if [ "$TERM" = dumb ]; then
   color_prompt=
 fi
 
+function open { nohup gnome-open "$@" 2>/dev/null >/dev/null; }
+
+function find_process {
+  ps aux | grep [${1:0:1}]${1:1}
+}
+
+function process_progress {
+  proc="/proc/$1"
+  if [ ! -d "$proc" ] ; then
+    echo "Can't find process $1"
+    process=$(find_process $1 | tail -n 1)
+    if [ -z "$process" ] ; then
+      echo "No processes found for $1"
+      proc=
+    else
+      echo "Trying: $process"
+      proc="/proc/$(echo $process | awk "{ print \$2 }")"
+    fi
+  fi
+  if [ ! -z "$proc" ] ; then
+    if [ -z "$2" ] ; then
+      ls --color=always -l $proc/fd/ | awk "{ print \$8, \$9, \$10 }"
+    else
+      size=$(ls -l $(ls -l $proc/fd/$2 | awk "{ print \$NF }") | awk "{ print \$5 }")
+      pos=$(cat $proc/fdinfo/$2 | awk "/pos/ { print \$2 }")
+      echo "$(($pos*100/$size))% $pos/$size"
+    fi
+  fi
+}
+
 # PROMPT
        BLUE="\[\033[0;34m\]"
         RED="\[\033[0;31m\]"
@@ -59,7 +89,7 @@ if [ "$color_prompt" = yes ]; then
 fi
 case ${TERM} in
   screen)
-  PS1='\[\033k\033\\\]'$PS1
+  PS1='\[\033k$(basename "$(pwd)")\033\\\]'$PS1
   ;;
   dumb)
   PS1="\$"
@@ -98,8 +128,7 @@ if [[ -s $HOME/.rvm/scripts/rvm ]] ; then
   source $HOME/.rvm/scripts/rvm
 fi
 
-EDITOR="vim"
-BROWSER="/usr/bin/chromium-browser"
+export EDITOR="vim"
 
 # Completers
 #SSH_COMPLETE=( $(cat ~/.ssh/known_hosts | \
@@ -107,6 +136,9 @@ BROWSER="/usr/bin/chromium-browser"
 #                 sed -e s/,.*//g | \
 #                 uniq ) )
 #complete -o default -W '${SSH_COMPLETE[*]}' ssh
-DATABASE_COMPLETE=( $(psql -l | awk "/$USERNAME/ { print \$1 }" ) )
-complete -o default -W '${DATABASE_COMPLETE[*]}' psql dropdb
+PSQL_DATABASE_COMPLETE=( $(psql -l | awk "/$USERNAME/ { print \$1 }" ) )
+complete -o default -W '${PSQL_DATABASE_COMPLETE[*]}' psql dropdb
 complete -C $HOME/.local/dot_files/rake_completion.rb -o default rake
+MONGO_DATABASE_COMPLETE=( $(echo "show dbs" | mongo 2>/dev/null | grep "^[0-9a-z_]\+$") )
+complete -o default -W '${MONGO_DATABASE_COMPLETE[*]}' mongo
+complete -C $rvm_scripts_path/rvm-completion.rb -o default rvm

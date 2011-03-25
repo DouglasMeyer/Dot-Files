@@ -1,7 +1,8 @@
 shell -$SHELL
 #term xterm
 startup_message off
-shelltitle "$ |"
+#shelltitle "$ |" # set the title to the command name
+shelltitle ""
 
 multiuser on
 acladd pair
