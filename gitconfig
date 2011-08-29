@@ -17,6 +17,7 @@
 [alias]
   tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
   tar-gz = !sh -c 'prefix=$(basename $PWD) && ver=$1 && git archive --prefix=\"$prefix-$ver/\" HEAD | gzip > \"$prefix-$ver.tar.gz\"' -
+  merged-remotes = "!bash -c 'git branch -r | grep origin | grep -v \"\\->\" | grep -v \"origin/master\" | while read branch; do if [[ \"$(git merge-base origin/master $branch)\" == \"$(git rev-parse $branch)\" ]]; then echo $branch; fi; done' -"
 [core]
   pager = less -FRSX
 [apply]

@@ -16,10 +16,6 @@ if [ -n "$BASH_VERSION" ]; then
   fi
 fi
 
-if [ -d "$HOME/.gem/ruby/1.9.0/bin" ] ; then
-  PATH="$HOME/.gem/ruby/1.9.0/bin:$PATH"
-fi
-
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
   PATH="$HOME/.local/bin:$PATH"

@@ -17,7 +17,8 @@ set incsearch
 set hlsearch
 nnoremap <C-L> :nohlsearch<CR><C-L>
 
-set dir=/tmp/ram
+set nowrap
+set dir=/tmp
 set mouse=nv
 set title
 set wildmenu

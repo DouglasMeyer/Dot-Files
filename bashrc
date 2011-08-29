@@ -64,6 +64,15 @@ function process_progress {
   fi
 }
 
+function countdown {
+  if [[ ! "$1" -lt 1 ]]; then
+    step=${2:-1}
+    echo "$1"
+    sleep $step
+    countdown $(( $1 - $step )) $step
+  fi
+}
+
 # PROMPT
        BLUE="\[\033[0;34m\]"
         RED="\[\033[0;31m\]"
@@ -138,7 +147,5 @@ export EDITOR="vim"
 #complete -o default -W '${SSH_COMPLETE[*]}' ssh
 PSQL_DATABASE_COMPLETE=( $(psql -l | awk "/$USERNAME/ { print \$1 }" ) )
 complete -o default -W '${PSQL_DATABASE_COMPLETE[*]}' psql dropdb
-complete -C $HOME/.local/dot_files/rake_completion.rb -o default rake
 MONGO_DATABASE_COMPLETE=( $(echo "show dbs" | mongo 2>/dev/null | grep "^[0-9a-z_]\+$") )
 complete -o default -W '${MONGO_DATABASE_COMPLETE[*]}' mongo
-complete -C $rvm_scripts_path/rvm-completion.rb -o default rvm
