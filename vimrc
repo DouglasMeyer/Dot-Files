@@ -17,9 +17,12 @@ set incsearch
 set hlsearch
 nnoremap <C-L> :nohlsearch<CR><C-L>
 
+" Save more than 20 records in history
+set history=200
 set nowrap
 set dir=/tmp
-set mouse=nv
+" Only use the mouse for moving the cursor, no visual stuff, no moving the input
+set mouse=n
 set title
 set wildmenu
 set wildmode=list:longest
@@ -29,8 +32,8 @@ set scrolloff=2
 " get rif of a bunch of confirmation messages
 set shortmess=atI
 let mapleader = ","
-set list " show Tabs and EOL     
-set listchars=tab:>⋅,trail:␣
+"set list " show Tabs and EOL     
+"set listchars=tab:>⋅,trail:␣
 set fileformats=unix " force files to not support MS-DOS files
 " I have no clude what this does.
 " #{file_name}(#{buf_index}) #{formats:[unix,MS-dos]:[sh]:[utf-8]}
@@ -86,37 +89,48 @@ noremap <F3> :set spell!<CR>     " toggle spelling
 
 autocmd BufWrite *.rb,*.js,*.html,*.sql,*.py,*.php,*.rhtml,*.erb :%s/\s\+$//e
 
-map <silent> <Leader>r
-  \ :!./% 2>&1 \| tee /tmp/run.out<CR>
-  \ :if !bufloaded('/tmp/run.out')<CR>
-  \   sview /tmp/run.out<CR>
-  \   set autoread<CR>
-  \   set filetype=output<CR>
-  \   nnoremap <buffer> <silent> <expr> q ":q\r"<CR>
-  \ endif<CR><CR>
-autocmd FileType ruby :map <silent> <Leader>r
-  \ :!ruby % 2>&1 \| tee /tmp/run.out<CR>
-  \ :if !bufloaded('/tmp/run.out')<CR>
-  \   sview /tmp/run.out<CR>
-  \   set autoread<CR>
-  \   set filetype=output<CR>
-  \   nnoremap <buffer> <silent> <expr> q ":q\r"<CR>
-  \ endif<CR><CR>
-autocmd FileType php :map <F5> :!phpunit %\| tee /tmp/test.out<CR>
+map <silent> <Leader>r :call RunFile()<CR>
+
+function! RunFile()
+  let file = expand('%')
+  if filereadable("./.run")
+    let cmd = './.run '.file.' '.line('.')
+  elseif &filetype == 'cucumber'
+    let cmd = 'cucumber '.file
+  elseif &filetype == 'ruby'
+    let cmd = 'ruby '.file
+  elseif &filetype == 'javascript'
+    let cmd = 'node '.file
+  elseif &filetype == 'coffee'
+    let cmd = 'coffee '.file
+  else
+    let cmd = './'.file
+  endif
+  let pid = getpid()
+  let file = '/tmp/run.out'
+  let cmd = cmd.' 2>&1 | tee '.file
+  exe "normal :!".cmd."\<CR>"
+  if !bufloaded(file)
+   exe "sview ".file
+   set autoread
+   set filetype=output
+   nnoremap <buffer> <silent> <expr> q ":q\r"
+  else
+    :checktime
+  endif
+endfun
 
 vmap <silent> <Leader>f c<C-R><C-R>=substitute(@", "\\([^,]*\\),\\(\\s\\?\\)\\(.*\\)", "\\3,\\2\\1", "")<CR><ESC>
-iabbrev <silent> UNICODESNOWMAN ☃
-iabbrev <silent> INTERROBANG ‽
-iabbrev <silent> SADFACE ☹
-iabbrev <silent> CHECK ✓
+"iabbrev <silent> UNICODESNOWMAN ☃
+"iabbrev <silent> INTERROBANG ‽
+"iabbrev <silent> SADFACE ☹
+"iabbrev <silent> CHECK ✓
 "iabbrev <silent> #\!ruby "#!/usr/bin/env ruby"
 iabbrev <silent> env_ruby #!/usr/bin/env ruby
 map <C-C> <C-A>
 
 " save a file, even if you forgot "sudo vim"
 cmap w!! w !sudo tee % >/dev/null
-
-map <Leader>m :FuzzyFinderTextMate<CR>
 
 " ftplugin options
 let g:git_diff_spawn_mode = 1
