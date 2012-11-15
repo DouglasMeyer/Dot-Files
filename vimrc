@@ -1,5 +1,22 @@
 set nocompatible " don't make VIM compatible with VI
-set modelines=0  " some security thing
+filetype off " required by vundle
+
+" vundle setup
+set rtp+=/home/douglas/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+
+" vim bundles
+
+" fancy status bar
+Bundle 'Lokaltog/vim-powerline'
+"let g:Powerline_symbols = 'fancy'
+let g:Powerline_symbols = 'unicode'
+
+" coffee script syntax and stuff
+Bundle 'kchmck/vim-coffee-script'
+
+filetype plugin indent on " also required by vundle
 
 "syntax on
 syntax enable

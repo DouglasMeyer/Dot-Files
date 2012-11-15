@@ -1,0 +1,45 @@
+#!/bin/bash
+## Completion for bundler
+
+COMMANDS='install update package exec config check list show outdated console open viz init gem'
+
+function __bundler_list_packages {
+  #latest=`ls -t .gems~ Gemfile Gemfile.lock 2> /dev/null | head -1`
+  #if [[ $latest != '.gems~' ]]; then
+  #  bundle list | grep "^  *" | cut -d " " -f 4 > .gems~
+  #fi
+  #cat .gems~
+  grep "[^\W]\+ (" Gemfile.lock | sed -e "s/^ *\([^ ].*\) (.*$/\1/" | sort -u
+}
+
+function _bundler_complete {
+  local cur prev cmd special opts
+
+  COMPREPLY=()
+  cur=`_get_cword`
+  cmd=${COMP_WORDS[1]}
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  if [ "$COMP_CWORD" -eq 1 ]; then
+    opts="$COMMANDS"
+  else
+    case $prev in
+    show|open|update)
+      opts="$(__bundler_list_packages)"
+      ;;
+    exec)
+      COMPREPLY=( $( compgen -A command -- "$cur" ) )
+      return 0
+      ;;
+    rake)
+      if [[ "${COMP_WORDS[COMP_CWORD-2]}" == "exec" ]]; then
+        _rakecomplete
+        return 0
+      fi
+    esac
+  fi
+
+  COMPREPLY=( $(compgen -W "$opts" -- $cur) )
+}
+
+complete -F _bundler_complete bundle
