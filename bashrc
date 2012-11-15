@@ -2,23 +2,7 @@
 [[ $- != *i* ]] && return
 
 ## Helpers
-function open { nohup xdg-open "$@" 2>/dev/null > /dev/null; }
-function find_process { ps aux | grep [${1:0:1}]${1:1}; }
-function countdown {
-  if [[ ! "$1" -lt 1 ]]; then
-    step=${2:-1}
-    echo "$1"
-    sleep $step
-    countdown $(( $1 - $step )) $step
-  fi
-}
-function notify_at {
-  echo "notify-send \"$2\" \"$3\"" | at $1
-}
-function notify_in {
-  notify_at "now + $1" "$2" "$3"
-}
-
+[ -f ~/.shell_helpers ] && . ~/.shell_helpers
 
 ## PROMPT
 [ -f /usr/share/git/git-prompt.sh ] && . /usr/share/git/git-prompt.sh
