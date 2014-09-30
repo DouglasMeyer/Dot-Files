@@ -14,11 +14,25 @@ LIGHT_GREEN="\[\033[1;32m\]"
       WHITE="\[\033[1;37m\]"
  LIGHT_GRAY="\[\033[0;37m\]"
        GRAY="\[\033[00m\]"
-git_or_user_host () {
-  local b="$(GIT_PS1_SHOWDIRTYSTATE=t GIT_PS1_SHOWSTASHSTATE=t __git_ps1 '(%s)')"
-  echo "${b:-$USER@$HOSTNAME}"
+      green="\[\033[0;32m\]"
+       blue="\[\033[0;34m\]"
+        red="\[\033[0;31m\]"
+  light_red="\[\033[1;31m\]"
+      reset="\[\033[0m\]"
+
+export PROPMPT_DIRTRIM=3
+dot="\342\200\242"
+PS1="${light_red}\${?#0}${green}\$(GIT_PS1_SHOWSTASHSTATE=t __git_ps1 '%s')${blue}\w${reset}${dot}"
+#PS1="${light_red}\${?#0}${reset}•"
+print_pre_prompt() {
+  PS1R="[$(date +%T)]"
+  #PS1R="abcdefg"
+  columns=$(tput cols)
+  #printf "\033[0;31m%$((${columns-80}))s\033[00m\r" "$PS1R"
+  printf "%$((${columns-80}))s\r" "$PS1R"
 }
-PS1="$GREEN\$(git_or_user_host):$BLUE\w$GRAY\$ "
+PROMPT_COMMAND=print_pre_prompt
+
 case ${TERM} in
   screen)
   PS1='\[\033k\W\033\\\]'$PS1
@@ -30,7 +44,8 @@ esac
 
 
 export EDITOR='vim'
-HISTSIZE=1000000
+export BROWSER='chromium'
+HISTSIZE=10000000
 
 [ -f ~/.shell_aliases ] && . ~/.shell_aliases
 
@@ -40,5 +55,10 @@ _git_branch_merged ()
 {
   __git_complete_revlist
 }
+_git_base_diff ()
+{
+  _git_diff
+}
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+eval `/home/douglas/Code/tmp/tmuxifier/bin/tmuxifier init -`
+eval "$(beet completion)"

@@ -1,5 +1,5 @@
 function open { nohup xdg-open "$@" 2>/dev/null > /dev/null; }
-function find_process { ps aux | grep [${1:0:1}]${1:1}; }
+function find_process { ps aux | grep "[${1:0:1}]${1:1}"; }
 function countdown {
   if [[ ! "$1" -lt 1 ]]; then
     step=${2:-1}
@@ -8,9 +8,62 @@ function countdown {
     countdown $(( $1 - $step )) $step
   fi
 }
+function vim_grep {
+  vim $($@ | cut -d: -f1 | sort -u)
+}
 function notify_at {
   echo "notify-send \"$2\" \"$3\"" | at $1
 }
 function notify_in {
   notify_at "now + $1" "$2" "$3"
 }
+function try {
+  count=0
+  max_count=100
+  while [[ $count -lt $max_count && $? == 0 ]] ; do
+    count=$(($count + 1))
+    echo "Attempt $count"
+    $@
+  done
+  [[ $? == 0 ]] && echo "Completed all $count tries." || echo "Failed after $count tries."
+}
+function largest_files {
+  du ./ -h --max-depth=4 --exclude-from=<(
+    mount | \
+    grep -v sda5 | \
+    cut -d" " -f 3 | \
+    grep $(pwd) | \
+    cut -c $(pwd | wc -c)- | \
+    sed "s/^\/\?/.\//"
+  ) 2>/dev/null | \
+  sort -h
+}
+
+function calc {
+  echo "scale=3 ; $@" | bc -l
+}
+
+tmux(){
+  tmux=/usr/bin/tmux
+  if [[ $# == 1 && -f "$HOME/.config/tmux/sessions/$1" ]] ; then
+    if $tmux has-session -t $1 ; then
+      echo "attach"
+      $tmux attach-session -t $1
+    else
+      echo "load"
+      $tmux new-session -s $1 \; source-file "$HOME/.config/tmux/sessions/$1"
+    fi
+  #elif [[ "$TMUX" ]] ; then
+    #$tmux new-window -c $(pwd)
+  #elif [[ -f .tmuxrc ]] ; then
+    #$tmux new-session -c .tmuxrc -s $(basename $(pwd))
+  elif [[ $# == 0 ]] ; then
+    echo "new"
+    $tmux -A new-session -s $(basename $(pwd))
+  else
+    echo "pass: $@"
+    $tmux $@
+  fi
+}
+
+# vim: set filetype=sh:

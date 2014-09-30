@@ -1,7 +1,5 @@
 shell -$SHELL
-#term xterm
 startup_message off
-#shelltitle "$ |" # set the title to the command name
 shelltitle ""
 
 multiuser on
@@ -12,8 +10,6 @@ defscrollback 10000
 
 hardstatus on
 hardstatus alwayslastline
-# From Dan - time? and is someone in the same window as you
-#hardstatus string "%{=}%{k}%H %c %D %M%d: %{K}%?%-Lw%?%{R}%n*%f%t %?(%u)%?%{K}%?%+Lw%?"
 
 # From web - hostname - screens - date/time
 hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f %t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %Y-%m-%d %{W}%c %{g}]'

@@ -5,16 +5,74 @@ filetype off " required by vundle
 set rtp+=/home/douglas/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
+Bundle 'slim-template/vim-slim'
+Bundle 'digitaltoad/vim-jade'
 
 " vim bundles
 
 " fancy status bar
-Bundle 'Lokaltog/vim-powerline'
-"let g:Powerline_symbols = 'fancy'
-let g:Powerline_symbols = 'unicode'
+Bundle 'itchyny/lightline.vim'
+let g:lightline = {
+  \ 'colorscheme': 'wombat',
+  \ 'active': {
+  \   'right': [ [ 'lineinfo' ],
+  \              [ 'percent' ],
+  \              [ 'fileencoding', 'filetype' ] ]
+  \ },
+  \ 'component': { 'filename': '%f' },
+  \ 'separator': { 'left': '⮀', 'right': '⮂' },
+  \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+  \}
 
 " coffee script syntax and stuff
 Bundle 'kchmck/vim-coffee-script'
+
+" <c-p> fuzzy file finding
+Bundle 'kien/ctrlp.vim'
+
+set wildignore+=*/node_modules/*
+set wildignore+=*/build/*
+set wildignore+=*/spec_build/*
+"let g:ctrlp_custom_ignore = '/build/'
+let g:ctrlp_map = '<c-o>'
+"let g:ctrlp_open_multiple_files = ''
+"let g:ctrlp_prompt_mappings = {
+"  \ 'PrtBS()':              ['<bs>', '<c-]>'],
+"  \ 'PrtDelete()':          ['<del>'],
+"  \ 'PrtDeleteWord()':      ['<c-w>'],
+"  \ 'PrtClear()':           ['<c-u>'],
+"  \ 'PrtSelectMove("j")':   ['<c-j>', '<down>'],
+"  \ 'PrtSelectMove("k")':   ['<c-k>', '<up>'],
+"  \ 'PrtSelectMove("t")':   ['<Home>', '<kHome>'],
+"  \ 'PrtSelectMove("b")':   ['<End>', '<kEnd>'],
+"  \ 'PrtSelectMove("u")':   ['<PageUp>', '<kPageUp>'],
+"  \ 'PrtSelectMove("d")':   ['<PageDown>', '<kPageDown>'],
+"  \ 'PrtHistory(-1)':       ['<c-n>'],
+"  \ 'PrtHistory(1)':        ['<c-p>'],
+"  \ 'AcceptSelection("e")': ['<cr>', '<2-LeftMouse>'],
+"  \ 'AcceptSelection("h")': ['<c-x>', '<c-cr>', '<c-s>'],
+"  \ 'AcceptSelection("t")': ['<c-t>'],
+"  \ 'AcceptSelection("v")': ['<c-v>', '<RightMouse>'],
+"  \ 'ToggleFocus()':        ['<s-tab>'],
+"  \ 'ToggleRegex()':        ['<c-r>'],
+"  \ 'ToggleByFname()':      ['<c-d>'],
+"  \ 'ToggleType(1)':        ['<c-f>', '<c-up>'],
+"  \ 'ToggleType(-1)':       ['<c-b>', '<c-down>'],
+"  \ 'PrtExpandDir()':       ['<tab>'],
+"  \ 'PrtInsert("c")':       ['<MiddleMouse>', '<insert>'],
+"  \ 'PrtInsert()':          ['<c-\>'],
+"  \ 'PrtCurStart()':        ['<c-a>'],
+"  \ 'PrtCurEnd()':          ['<c-e>'],
+"  \ 'PrtCurLeft()':         ['<c-h>', '<left>', '<c-^>'],
+"  \ 'PrtCurRight()':        ['<c-l>', '<right>'],
+"  \ 'PrtClearCache()':      ['<F5>'],
+"  \ 'PrtDeleteEnt()':       ['<F7>'],
+"  \ 'CreateNewFile()':      ['<c-y>'],
+"  \ 'MarkToOpen()':         ['<c-z>'],
+"  \ 'OpenMulti()':          ['<c-o>'],
+"  \ 'PrtExit()':            ['<esc>', '<c-c>', '<c-g>'],
+"  \ }
+
 
 filetype plugin indent on " also required by vundle
 
@@ -33,14 +91,16 @@ set smartcase
 set incsearch
 set hlsearch
 nnoremap <C-L> :nohlsearch<CR><C-L>
+nnoremap <C-P> :set paste!<CR><C-L>
 
 " Save more than 20 records in history
 set history=200
 set nowrap
 set dir=/tmp
 " Only use the mouse for moving the cursor, no visual stuff, no moving the input
-set mouse=n
-set title
+set mouse=
+" Don't show the stupid "Thanks for flying Vim" message on exit
+"set title
 set wildmenu
 set wildmode=list:longest
 set clipboard=unnamed
@@ -94,7 +154,7 @@ if has("autocmd")
   \ endif
 
   " automatically turn on spelling for git commit messages
-  autocmd FileType gitcommit set spell
+  autocmd FileType gitcommit setlocal spell
 
   autocmd FileType help nnoremap <buffer><CR> <C-]>   " Enter selects subject
   autocmd FileType help nnoremap <buffer><BS> <C-T>   " Backspace to go back
@@ -102,9 +162,11 @@ else
   set autoindent
 endif
 
-noremap <F3> :set spell!<CR>     " toggle spelling
+noremap <F3> :setlocal spell!<CR>     " toggle spelling
 
 autocmd BufWrite *.rb,*.js,*.html,*.sql,*.py,*.php,*.rhtml,*.erb :%s/\s\+$//e
+
+autocmd BufEnter *.slim set ft=slim
 
 map <silent> <Leader>r :call RunFile()<CR>
 
@@ -138,10 +200,10 @@ function! RunFile()
 endfun
 
 vmap <silent> <Leader>f c<C-R><C-R>=substitute(@", "\\([^,]*\\),\\(\\s\\?\\)\\(.*\\)", "\\3,\\2\\1", "")<CR><ESC>
-"iabbrev <silent> UNICODESNOWMAN ☃
-"iabbrev <silent> INTERROBANG ‽
-"iabbrev <silent> SADFACE ☹
-"iabbrev <silent> CHECK ✓
+iabbrev <silent> UNICODESNOWMAN ☃
+iabbrev <silent> INTERROBANG ‽
+iabbrev <silent> SADFACE ☹
+iabbrev <silent> CHECK ✓
 "iabbrev <silent> #\!ruby "#!/usr/bin/env ruby"
 iabbrev <silent> env_ruby #!/usr/bin/env ruby
 map <C-C> <C-A>

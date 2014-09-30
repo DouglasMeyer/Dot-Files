@@ -1,7 +1,10 @@
 # vim: set filetype=sh:
 
-#alias ls="ls --color=auto"
+alias ls="ls --color=auto"
 alias grep='grep --color=auto'
+
+# Keep environment variables (the extra space allows for more alias expansion)
+alias sudo="sudo -sE "
 
 alias rm="trash-put"
 alias remove="/bin/rm"
@@ -10,7 +13,6 @@ alias previous_command_name='history|tail -n1|sed -e "s/^\s*[0-9]\+\s*//" -e "s/
 alias alert='notify-send --quiet -i /usr/share/icons/gnome/32x32/apps/gnome-terminal.png "[$?] $(previous_command_name)"'
 
 #alias new-totem="totem --no-existing-session"
-alias new-chrome="chromium-browser --temp-profile"
 
 alias wget-mirror="wget -e robots=off --timestamping --recursive --level=inf --no-parent --page-requisites --convert-links --backup-converted"
 alias wget-fullpage="wget -e robots=off --page-requisites --span-hosts --convert-links"
