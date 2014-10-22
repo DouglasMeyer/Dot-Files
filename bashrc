@@ -23,24 +23,13 @@ LIGHT_GREEN="\[\033[1;32m\]"
 export PROPMPT_DIRTRIM=3
 dot="\342\200\242"
 PS1="${light_red}\${?#0}${green}\$(GIT_PS1_SHOWSTASHSTATE=t __git_ps1 '%s')${blue}\w${reset}${dot}"
-#PS1="${light_red}\${?#0}${reset}•"
 print_pre_prompt() {
   PS1R="[$(date +%T)]"
-  #PS1R="abcdefg"
   columns=$(tput cols)
   #printf "\033[0;31m%$((${columns-80}))s\033[00m\r" "$PS1R"
   printf "%$((${columns-80}))s\r" "$PS1R"
 }
 PROMPT_COMMAND=print_pre_prompt
-
-case ${TERM} in
-  screen)
-  PS1='\[\033k\W\033\\\]'$PS1
-  ;;
-  dumb)
-  PS1="\$"
-  ;;
-esac
 
 
 export EDITOR='vim'

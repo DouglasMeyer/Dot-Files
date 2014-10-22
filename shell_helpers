@@ -45,23 +45,20 @@ function calc {
 
 tmux(){
   tmux=/usr/bin/tmux
-  if [[ $# == 1 && -f "$HOME/.config/tmux/sessions/$1" ]] ; then
-    if $tmux has-session -t $1 ; then
-      echo "attach"
+  exec_file="$HOME/.config/tmux/sessions/$1"
+  if [[ $# == 1 && -x $exec_file ]] ; then
+    if $tmux has-session -t $1 2>/dev/null ; then
       $tmux attach-session -t $1
     else
-      echo "load"
-      $tmux new-session -s $1 \; source-file "$HOME/.config/tmux/sessions/$1"
+      $exec_file
     fi
   #elif [[ "$TMUX" ]] ; then
     #$tmux new-window -c $(pwd)
   #elif [[ -f .tmuxrc ]] ; then
     #$tmux new-session -c .tmuxrc -s $(basename $(pwd))
   elif [[ $# == 0 ]] ; then
-    echo "new"
-    $tmux -A new-session -s $(basename $(pwd))
+    $tmux new-session -s $(basename $(pwd))
   else
-    echo "pass: $@"
     $tmux $@
   fi
 }
