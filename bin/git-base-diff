@@ -1,0 +1,61 @@
+#!/bin/bash
+usage_text="git-base-diff - Show changes on a branch from the point where it branched from another commit.
+Usage: $0 [--diff-options] <commit> [<commit>]
+Arguments:
+  args     - Does this
+Options:
+  --option - Does that
+"
+
+
+### Script Support
+    # Exit immediately if a command dosn't exit with 0
+        # Exit immediately if a variable isn't defined
+          # If any commands in a pipe fail, they all fail.
+set -e -u -o pipefail
+
+
+### Options/Flags/Defaults
+usage=
+diff_args=
+base_branch=
+branch=
+
+while [ $# -ne 0 ] ; do
+  case $1 in
+  --help | --usage ) shift ; usage=t ;;
+  -* )
+    diff_args="$diff_args $1"
+    shift
+    ;;
+  * )
+    if [ -z $base_branch ] ; then
+      base_branch="$1"
+    elif [ -z $branch ] ; then
+      branch="$1"
+    else
+      echo "Unknown option \"$1\""
+      echo
+      usage=t
+    fi
+    shift
+    ;;
+  esac
+done
+
+if [ "$usage" ] ; then
+  echo "${usage_text}"
+  exit 2
+fi
+
+
+### Arguments/Options validation
+
+if [ -z $branch ] ; then
+  branch=HEAD
+fi
+
+
+### Script Body
+
+git diff $diff_args $(git merge-base $base_branch $branch)..$branch

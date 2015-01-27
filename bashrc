@@ -2,7 +2,7 @@
 [[ $- != *i* ]] && return
 
 ## Helpers
-[ -f ~/.shell_helpers ] && . ~/.shell_helpers
+[ -f ~/.local/Dot-Files/shell_helpers ] && . ~/.local/Dot-Files/shell_helpers
 
 ## PROMPT
 [ -f /usr/share/git/git-prompt.sh ] && . /usr/share/git/git-prompt.sh
@@ -36,7 +36,7 @@ export EDITOR='vim'
 export BROWSER='chromium'
 HISTSIZE=10000000
 
-[ -f ~/.shell_aliases ] && . ~/.shell_aliases
+[ -f ~/.local/Dot-Files/shell_aliases ] && . ~/.local/Dot-Files/shell_aliases
 
 
 ## Completions
@@ -49,5 +49,4 @@ _git_base_diff ()
   _git_diff
 }
 
-eval `/home/douglas/Code/tmp/tmuxifier/bin/tmuxifier init -`
-eval "$(beet completion)"
+#eval "$(beet completion)"

@@ -2,16 +2,16 @@ set nocompatible " don't make VIM compatible with VI
 filetype off " required by vundle
 
 " vundle setup
-set rtp+=/home/douglas/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
-Bundle 'slim-template/vim-slim'
-Bundle 'digitaltoad/vim-jade'
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
+Plugin 'slim-template/vim-slim'
+Plugin 'digitaltoad/vim-jade'
 
 " vim bundles
 
 " fancy status bar
-Bundle 'itchyny/lightline.vim'
+Plugin 'itchyny/lightline.vim'
 let g:lightline = {
   \ 'colorscheme': 'wombat',
   \ 'active': {
@@ -25,10 +25,10 @@ let g:lightline = {
   \}
 
 " coffee script syntax and stuff
-Bundle 'kchmck/vim-coffee-script'
+Plugin 'kchmck/vim-coffee-script'
 
 " <c-p> fuzzy file finding
-Bundle 'kien/ctrlp.vim'
+Plugin 'kien/ctrlp.vim'
 
 set wildignore+=*/node_modules/*
 set wildignore+=*/build/*
@@ -74,6 +74,7 @@ let g:ctrlp_map = '<c-o>'
 "  \ }
 
 
+call vundle#end()
 filetype plugin indent on " also required by vundle
 
 "syntax on
@@ -168,12 +169,17 @@ autocmd BufWrite *.rb,*.js,*.html,*.sql,*.py,*.php,*.rhtml,*.erb :%s/\s\+$//e
 
 autocmd BufEnter *.slim set ft=slim
 
-map <silent> <Leader>r :call RunFile()<CR>
+map <silent> <Leader>r :call RunFile(line('.'))<CR>
+map <silent> <Leader>R :call RunFile(0)<CR>
 
-function! RunFile()
+function! RunFile(line)
   let file = expand('%')
   if filereadable("./.run")
-    let cmd = './.run '.file.' '.line('.')
+    if a:line
+      let cmd = './.run '.file.' '.a:line
+    else
+      let cmd = './.run '.file
+    endif
   elseif &filetype == 'cucumber'
     let cmd = 'cucumber '.file
   elseif &filetype == 'ruby'
